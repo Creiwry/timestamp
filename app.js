@@ -1,101 +1,53 @@
 const express = require('express');
 
-const timestamp = require('unix-timestamp');
+const dateString = require('./dateString');
 
-timestamp.fromDate
 
 const app = express();
+
+ //if there is no date
+
+    
+app.get('/api/', (req, res)=>{
+    console.log("no date");
+    let dateUnix = Date.now()
+    let dateUTC = dateString(dateUnix);
+    console.log(dateUnix, dateUTC);
+    return res.status(200).json({unix:dateUnix,utc:dateUTC})
+
+})
+
 
 
 
 app.get('/api/:date', (req, res)=>{
-    const {date} = req.params;
-    console.log(date);
-    let dateUnix = 0;
+    let {date} = req.params;
+    console.log(`date: ${date}`);
     let dateUTC = "";
-    let dayWeek = "";
-    let month = "";
-
-    if(date.includes("-")){
-    dateUnix = timestamp.fromDate(date);
-    dateUTC = date;
-
-    }else{
-    let dateOb = new Date(Number(date));
-    dateUnix = Number(date)
+    const dateOb = new Date(Number(date));
+    let dateUnix = dateOb.getTime();
+   
+        //if there is a date in a string format
+    if(Date.parse(date) === Date.parse(date)){
+        console.log("date in string");
+            dateUnix = Date.parse(date);
+            dateUTC = dateString(dateUnix);
     
-    switch (dateOb.getUTCDay()){
-        case 1:
-            dayWeek="Mon";
-            break;
-        case 2:
-            dayWeek="Tue";
-            break;
-        case 3:
-            dayWeek="Wed";
-            break;
-        case 4:
-            dayWeek="Thu";
-            break;
-        case 5:
-            dayWeek="Fri";
-            break;
-        case 6:
-            dayWeek="Sat";
-            break;
-        case 7:
-            dayWeek="Sun";
-            break;
+            return res.status(200).json({unix:dateUnix,utc:dateUTC})
 
     }
+            
+        else if(dateString(Number(date))!== false){   
+            console.log("date in unix"); 
 
-    switch (dateOb.getUTCMonth()){
-        case 0:
-            month="Jan";
-            break;
-        case 1:
-            month="Feb";
-            break;
-        case 2:
-            month="Mar";
-            break;
-        case 3:
-            month="Apr";
-            break;
-        case 4:
-            month="May";
-            break;
-        case 5:
-            month="Jun";
-            break;
-        case 6:
-            month="Jul";
-            break;
-        case 7:
-            month="Aug";
-            break;
-        case 8:
-            month="Sep";
-            break;
-        case 9:
-            month="Oct";
-            break;
-        case 10:
-            month="Nov";
-            break;
-        case 11:
-            month="Dec";
-            break;
-        
-
-    }
-    dateUTC = `${dayWeek}, ${dateOb.getUTCDate()} ${month} ${dateOb.getFullYear()} ${dateOb.getUTCHours()}:${dateOb.getUTCMinutes()}:${dateOb.getUTCSeconds()} GMT`
-
-    }
-
+            dateUTC = dateString(Number(date));
+            return res.status(200).json({unix:dateUnix,utc:dateUTC})
     
-    console.log(dateUnix, dateUTC);  
-    return res.status(200).json({success:true, data:{unix:dateUnix,utc:dateUTC}})
+        } else {
+            console.log("wrong date");
+            return res.json({ error : "Invalid Date" });
+
+    }    
     
 })
 
