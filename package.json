@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon app.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["timestamp","UNIX", "UTC"],
+  "author": "Creiwry",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.2",
